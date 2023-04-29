@@ -136,16 +136,68 @@ namespace lab {
         class InputIt,
         class Predicate,
         typename = RequireInputIter<InputIt>
-    > constexpr bool all_of(InputIt first, InputIt last, Predicate p) {
-        return last == find_if_not(first, last, p);
+    > constexpr InputIt find_if(InputIt first, InputIt last, Predicate p) {
+        for (; first != last; ++first) {
+            if (p(*first)) {
+                return first;
+            }
+        }
+
+        return last;
     }
 
     template<
         class InputIt,
         class Predicate,
         typename = RequireInputIter<InputIt>
-    > constexpr bool any_of(InputIt first, InputIt last, Predicate p) {
-        return !none_of(first, last, p);
+    > constexpr InputIt find_if_not(InputIt first, InputIt last, Predicate p) {
+        for (; first != last; ++first) {
+            if (!p(*first)) {
+                return first;
+            }
+        }
+
+        return last;
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > constexpr InputIt find_last(InputIt first, InputIt last, Predicate p) {
+        InputIt res = last;
+
+        for (; first != last; ++first) {
+            if (p(*first)) {
+                res = first;
+            }
+        }
+
+        return res;
+    }
+
+    template<
+        class InputIt,
+        typename T,
+        typename = RequireInputIter<InputIt>
+    > constexpr InputIt find_not(InputIt first, InputIt last, T x) {
+        return lab::find_if_not(first, last, base::BaseFindPredicate<T>(x));
+    }
+
+    template<
+        class InputIt,
+        typename T,
+        typename = RequireInputIter<InputIt>
+    > constexpr InputIt find_backward(InputIt first, InputIt last, T x) {
+        return find_last(first, last, base::BaseFindPredicate<T>(x));
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > constexpr bool all_of(InputIt first, InputIt last, Predicate p) {
+        return last == lab::find_if_not(first, last, p);
     }
 
     template<
@@ -153,7 +205,15 @@ namespace lab {
         class Predicate,
         typename = RequireInputIter<InputIt>
     > constexpr bool none_of(InputIt first, InputIt last, Predicate p) {
-        return last == find_if(first, last, p);
+        return last == lab::find_if(first, last, p);
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > constexpr bool any_of(InputIt first, InputIt last, Predicate p) {
+        return !lab::none_of(first, last, p);
     }
 
     template<
@@ -212,66 +272,6 @@ namespace lab {
     }
 
     template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > constexpr InputIt find_if(InputIt first, InputIt last, Predicate p) {
-        for (; first != last; ++first) {
-            if (p(*first)) {
-                return first;
-            }
-        }
-
-        return last;
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > constexpr InputIt find_if_not(InputIt first, InputIt last, Predicate p) {
-        for (; first != last; ++first) {
-            if (!p(*first)) {
-                return first;
-            }
-        }
-
-        return last;
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > constexpr InputIt find_last(InputIt first, InputIt last, Predicate p) {
-        InputIt res = last;
-
-        for (; first != last; ++first) {
-            if (p(*first)) {
-                res = first;
-            }
-        }
-
-        return res;
-    }
-
-    template<
-        class InputIt,
-        typename T,
-        typename = RequireInputIter<InputIt>
-    > constexpr InputIt find_not(InputIt first, InputIt last, T x) {
-        return lab::find_if_not(first, last, base::BaseFindPredicate<T>(x));
-    }
-
-    template<
-        class InputIt,
-        typename T,
-        typename = RequireInputIter<InputIt>
-    > constexpr InputIt find_backward(InputIt first, InputIt last, T x) {
-        return find_last(first, last, base::BaseFindPredicate<T>(x));
-    }
-
-    template<
         class BidirIt,
         class Predicate,
         typename = RequireBidirIter<BidirIt>
@@ -299,85 +299,6 @@ namespace lab {
     }
 
 #elif __cplusplus >= 201103L
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > bool all_of(InputIt first, InputIt last, Predicate p) {
-        return last == find_if_not(first, last, p);
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > bool any_of(InputIt first, InputIt last, Predicate p) {
-        return !none_of(first, last, p);
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > bool none_of(InputIt first, InputIt last, Predicate p) {
-        return last == find_if(first, last, p);
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > bool one_of(InputIt first, InputIt last, Predicate p) {
-        bool exist = false;
-
-        for (; first != last; ++first) {
-            if (p(*first)) {
-                if (exist) {
-                    return false;
-                }
-
-                exist = true;
-            }
-        }
-
-        return exist;
-    }
-
-    template<
-        class ForwardIt,
-        typename = RequireFwdIter<ForwardIt>
-    > bool is_sorted(ForwardIt first, ForwardIt last) {
-        return base::is_sorted_base(first, last, base::BaseComparator());
-    }
-
-    template<
-        class ForwardIt,
-        class Compare,
-        typename = RequireFwdIter<ForwardIt>
-    > bool is_sorted(ForwardIt first, ForwardIt last, Compare compare) {
-        return base::is_sorted_base(first, last, IteratorComparator<Compare>(compare));
-    }
-
-    template<
-        class InputIt,
-        class Predicate,
-        typename = RequireInputIter<InputIt>
-    > bool is_partitioned(InputIt first, InputIt last, Predicate p) {
-        for (; first != last; ++first) {
-            if (!p(*first)) {
-                break;
-            }
-        }
-
-        for (; first != last; ++first) {
-            if (p(*first)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     template<
         class InputIt,
@@ -437,6 +358,85 @@ namespace lab {
         typename = RequireInputIter<InputIt>
     > InputIt find_backward(InputIt first, InputIt last, T x) {
         return find_last(first, last, base::BaseFindPredicate<T>(x));
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > bool all_of(InputIt first, InputIt last, Predicate p) {
+        return last == lab::find_if_not(first, last, p);
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > bool none_of(InputIt first, InputIt last, Predicate p) {
+        return last == lab::find_if(first, last, p);
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > bool any_of(InputIt first, InputIt last, Predicate p) {
+        return !lab::none_of(first, last, p);
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > bool one_of(InputIt first, InputIt last, Predicate p) {
+        bool exist = false;
+
+        for (; first != last; ++first) {
+            if (p(*first)) {
+                if (exist) {
+                    return false;
+                }
+
+                exist = true;
+            }
+        }
+
+        return exist;
+    }
+
+    template<
+        class ForwardIt,
+        typename = RequireFwdIter<ForwardIt>
+    > bool is_sorted(ForwardIt first, ForwardIt last) {
+        return base::is_sorted_base(first, last, base::BaseComparator());
+    }
+
+    template<
+        class ForwardIt,
+        class Compare,
+        typename = RequireFwdIter<ForwardIt>
+    > bool is_sorted(ForwardIt first, ForwardIt last, Compare compare) {
+        return base::is_sorted_base(first, last, IteratorComparator(compare));
+    }
+
+    template<
+        class InputIt,
+        class Predicate,
+        typename = RequireInputIter<InputIt>
+    > bool is_partitioned(InputIt first, InputIt last, Predicate p) {
+        for (; first != last; ++first) {
+            if (!p(*first)) {
+                break;
+            }
+        }
+
+        for (; first != last; ++first) {
+            if (p(*first)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     template<

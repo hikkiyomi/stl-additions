@@ -8,9 +8,9 @@ namespace lab {
         class SecondContainer
     > class ZipIterator {
     public:
-        using T = typename FirstContainer::value_type;
-        using U = typename SecondContainer::value_type;
-        using FirstIter = typename FirstContainer::iterator;
+        using T          = typename FirstContainer::value_type;
+        using U          = typename SecondContainer::value_type;
+        using FirstIter  = typename FirstContainer::iterator;
         using SecondIter = typename SecondContainer::iterator;
     public:
         ZipIterator(const FirstIter& it1, const SecondIter& it2)
@@ -53,8 +53,8 @@ namespace lab {
         class SecondContainer
     > class zip {
     public:
-        using T = typename FirstContainer::value_type;
-        using U = typename SecondContainer::value_type;
+        using T        = typename FirstContainer::value_type;
+        using U        = typename SecondContainer::value_type;
         using iterator = ZipIterator<FirstContainer, SecondContainer>;
     public:
         zip(FirstContainer& cont1, SecondContainer& cont2)
