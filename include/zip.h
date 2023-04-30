@@ -38,6 +38,10 @@ namespace lab {
             return {*it1_, *it2_};
         }
 
+        ZipIterator& operator->() {
+            return *this;
+        }
+
         ZipIterator& operator++() {
             ++it1_;
             ++it2_;
