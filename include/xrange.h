@@ -1,12 +1,19 @@
 #pragma once
 
+#include <cinttypes>
+#include <iterator>
 #include <stdexcept>
 
 namespace lab {
     template<typename T>
     class XRangeIterator {
     public:
-        using value_type = typename T::value_type;
+        using value_type        = typename T::value_type;
+        using reference         = value_type&;
+        using size_type         = typename T::size_type;
+        using pointer           = value_type*;
+        using difference_type   = typename T::difference_type;
+        using iterator_category = std::input_iterator_tag;
     public:
         XRangeIterator(value_type value, value_type end_value, value_type step)
             : value_(value)
@@ -22,16 +29,20 @@ namespace lab {
             }
         }
     public:
-        bool operator==(const XRangeIterator& other) const {
+        bool operator==(const XRangeIterator<T>& other) const {
             return value_ == other.value_;
         }
 
-        bool operator!=(const XRangeIterator& other) const {
+        bool operator!=(const XRangeIterator<T>& other) const {
             return !(*this == other);
         }
 
         value_type& operator*() {
             return value_;
+        }
+
+        XRangeIterator& operator->() {
+            return *this;
         }
         
         XRangeIterator& operator++() {
@@ -67,8 +78,13 @@ namespace lab {
     template<typename T>
     class xrange {
     public:
-        using value_type = T;
-        using iterator   = XRangeIterator<xrange>;
+        using value_type      = T;
+        using reference       = T&;
+        using const_reference = const T&;
+        using iterator        = XRangeIterator<xrange<T>>;
+        using const_iterator  = XRangeIterator<const xrange<T>>;
+        using difference_type = ptrdiff_t;
+        using size_type       = size_t;
     public:
         xrange(T end)
             : start_(0)

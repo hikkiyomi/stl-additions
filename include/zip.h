@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cinttypes>
+#include <iterator>
 #include <utility>
 
 namespace lab {
@@ -8,12 +10,18 @@ namespace lab {
         class SecondContainer
     > class ZipIterator {
     public:
-        using T          = typename FirstContainer::value_type;
-        using U          = typename SecondContainer::value_type;
-        using FirstIter  = typename FirstContainer::iterator;
-        using SecondIter = typename SecondContainer::iterator;
+        using T                 = typename FirstContainer::value_type;
+        using U                 = typename SecondContainer::value_type;
+        using first_iter        = typename FirstContainer::iterator;
+        using second_iter       = typename SecondContainer::iterator;
+        using value_type        = std::pair<T, U>;
+        using reference         = value_type&;
+        using size_type         = size_t;
+        using pointer           = value_type*;
+        using difference_type   = ptrdiff_t;
+        using iterator_category = std::input_iterator_tag;
     public:
-        ZipIterator(const FirstIter& it1, const SecondIter& it2)
+        ZipIterator(const first_iter& it1, const second_iter& it2)
             : it1_(it1)
             , it2_(it2)
         {}
@@ -44,8 +52,8 @@ namespace lab {
             return res;
         }
     private:
-        FirstIter it1_;
-        SecondIter it2_;
+        first_iter it1_;
+        second_iter it2_;
     };
 
     template<
@@ -53,9 +61,14 @@ namespace lab {
         class SecondContainer
     > class zip {
     public:
-        using T        = typename FirstContainer::value_type;
-        using U        = typename SecondContainer::value_type;
-        using iterator = ZipIterator<FirstContainer, SecondContainer>;
+        using T                 = typename FirstContainer::value_type;
+        using U                 = typename SecondContainer::value_type;
+        using iterator          = ZipIterator<FirstContainer, SecondContainer>;
+        using value_type        = std::pair<T, U>;
+        using reference         = value_type&;
+        using size_type         = size_t;
+        using pointer           = value_type*;
+        using difference_type   = ptrdiff_t;
     public:
         zip(FirstContainer& cont1, SecondContainer& cont2)
             : cont1_(cont1)

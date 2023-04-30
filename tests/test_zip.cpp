@@ -4,8 +4,9 @@
 
 #include <list>
 #include <set>
+#include <utility>
 
-TEST(ZipTest, SameTypesSameContainers) {
+TEST(ZipTestSuite, SameTypesSameContainers) {
     std::vector<int> a = {1, 2, 3, 4};
     std::vector<int> b = {11, 12, 13, 14};
     std::vector<int> c = {5, 6, 7};
@@ -40,7 +41,7 @@ TEST(ZipTest, SameTypesSameContainers) {
     ASSERT_TRUE(res == ans2);
 }
 
-TEST(ZipTest, DiffTypesSameContainers) {
+TEST(ZipTestSuite, DiffTypesSameContainers) {
     std::vector<int> a = {1, 2, 3, 4};
     std::vector<char> b = {'a', 'b', 'c', 'd'};
     std::vector<std::string> c = {"heh", "huh", "hoh"};
@@ -75,7 +76,7 @@ TEST(ZipTest, DiffTypesSameContainers) {
     ASSERT_TRUE(res2 == ans2);
 }
 
-TEST(ZipTest, SameTypesDiffContainers) {
+TEST(ZipTestSuite, SameTypesDiffContainers) {
     std::vector<int> a = {1, 2, 3, 4};
     std::list<int> b = {11, 12, 13, 14};
     std::set<int> c = {5, 6, 7};
@@ -110,7 +111,7 @@ TEST(ZipTest, SameTypesDiffContainers) {
     ASSERT_TRUE(res == ans2);
 }
 
-TEST(ZipTest, DiffTypesDiffContainers) {
+TEST(ZipTestSuite, DiffTypesDiffContainers) {
     std::vector<int> a = {1, 2, 3, 4};
     std::list<char> b = {'a', 'b', 'c', 'd'};
     std::set<std::string> c = {"heh", "hoh", "huh"};
@@ -143,4 +144,19 @@ TEST(ZipTest, DiffTypesDiffContainers) {
     }
 
     ASSERT_TRUE(res2 == ans2);
+}
+
+TEST(ZipTestSuite, InitTest) {
+    std::vector<int> a{1, 2, 3};
+    std::vector<char> b{'a', 'b', 'c'};
+    auto temp = lab::zip(a, b);
+    std::vector<std::pair<int, char>> v{temp.begin(), temp.end()};
+
+    std::vector<std::pair<int, char>> ans{
+        std::make_pair(1, 'a'),
+        std::make_pair(2, 'b'),
+        std::make_pair(3, 'c')
+    };
+
+    ASSERT_TRUE(v == ans);
 }

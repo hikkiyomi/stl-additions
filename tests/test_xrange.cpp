@@ -73,3 +73,10 @@ TEST(XRangeTestSuite, BackwardTest) {
 
     ASSERT_TRUE(a == std::vector<int>({6, 4, 2}));
 }
+
+TEST(XRangeTestSuite, InitTest) {
+    auto range = lab::xrange(1, 6, 2);
+    std::vector<int> a{range.begin(), range.end()};
+
+    ASSERT_TRUE(a == std::vector<int>({1, 3, 5}));
+}
